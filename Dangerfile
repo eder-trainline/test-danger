@@ -17,9 +17,19 @@ begin
     if $?.success?
       tags = tags_output.split("\n")
 
-      # Check if the current version exists as a tag
-      if tags.include?(current_version)
+      # Filter tags that are in the format of version numbers
+      version_tags = tags.select { |tag| tag.match(/^\d+\.\d+\.\d+$/) }
+
+      # Convert tags to Gem::Version objects for comparison
+      current_version_obj = Gem::Version.new(current_version)
+      higher_versions = version_tags.select do |tag|
+        Gem::Version.new(tag) >= current_version_obj
+      end
+
+      if higher_versions.include?(current_version)
         fail("The version #{current_version} already exists as a tag in the repository. Please update the version to resolve the conflict.")
+      elsif higher_versions.any?
+        fail("There are higher or equal versions already tagged in the repository: #{higher_versions.join(', ')}. Please update to a newer version.")
       else
         message("The version #{current_version} is new and not yet tagged in the repository. Merge can proceed.")
       end
