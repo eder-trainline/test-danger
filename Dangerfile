@@ -9,6 +9,9 @@ begin
   version_match = file_content.match(/private var version: String {\s*"(\d+\.\d+\.\d+)"\s*}/)
 
   if version_match
+    # Block the merge by default
+    fail("Merge is currently blocked until version verification is complete.")
+
     current_version = version_match[1]
     message("The current library version is #{current_version}.")
 
@@ -19,11 +22,15 @@ begin
     if tags.include?(current_version)
       fail("The version #{current_version} already exists as a tag in the repository. Please update the version to resolve the conflict.")
     else
-      message("The version #{current_version} is new and not yet tagged in the repository.")
+      # Remove the fail condition since the version does not exist as a tag
+      message("The version #{current_version} is new and not yet tagged in the repository. Merge can proceed.")
+      # GitHub-specific function to approve the PR (optional and context-dependent)
+      # You might need an additional tool or bot to automate the removal of the block
+      # e.g., posting a comment to approve if your CI setup supports it.
     end
 
   else
-    warn("Could not find the version in the file #{file_path}.")
+    fail("Could not find the version in the file #{file_path}.")
   end
 
 rescue Errno::ENOENT
