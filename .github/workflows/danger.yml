@@ -5,8 +5,8 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build: Danger Repo Checks
-    name: 
+  build:
+    name: Danger Repo Checks
     runs-on: ubuntu-latest
 
     steps:
