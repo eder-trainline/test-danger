@@ -27,9 +27,10 @@ begin
       end
 
       if higher_versions.include?(current_version)
-        fail("The version #{current_version} already exists as a tag in the repository. Please update the version to resolve the conflict.")
+        fail("The version #{current_version} already exists as a tag in the repository. Please update the `version` attribute in the `PaymentClientVersionProvider` to a version higher than the latest tag.")
       elsif higher_versions.any?
-        fail("There are higher or equal versions already tagged in the repository: #{higher_versions.join(', ')}. Please update to a newer version.")
+        highest_version = higher_versions.map { |v| Gem::Version.new(v) }.max
+        fail("There are existing tags with versions greater than or equal to #{current_version}. The highest existing tag is #{highest_version}. Please update the `version` attribute in the `PaymentClientVersionProvider` to a version greater than #{highest_version}.")
       else
         message("The version #{current_version} is new and not yet tagged in the repository. Merge can proceed.")
       end
