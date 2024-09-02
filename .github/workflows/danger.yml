@@ -1,12 +1,11 @@
-name: Danger Repo Checks
+name: danger/danger
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
-    name: Danger Repo Checks
+  danger:
     runs-on: ubuntu-latest
 
     steps:
